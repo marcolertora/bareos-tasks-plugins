@@ -81,7 +81,7 @@ class Task(object):
     def pool(self):
         return
 
-    def task_open(self):
+    def task_open(self, command=None):
         return
 
     def task_read(self, buf):
@@ -101,7 +101,7 @@ class TaskStringIO(Task):
         self.task_name = task_name
         self.data = data
 
-    def task_open(self):
+    def task_open(self, command=None):
         self.data.seek(0)
 
     def task_read(self, buf):
@@ -141,9 +141,8 @@ class TaskProcess(Task):
 
     def execute_command(self, command):
         try:
-            return subprocess.check_output(command, shell=False, bufsize=-1,
-                                           preexec_fn=self.pre_run_execute)
-        except (subprocess.CalledProcessError, OSError, ValueError), e:
+            return subprocess.check_output(command, shell=False, bufsize=-1, preexec_fn=self.pre_run_execute)
+        except (subprocess.CalledProcessError, OSError, ValueError) as e:
             raise TaskException(e)
 
     def pool(self):
@@ -153,23 +152,25 @@ class TaskProcess(Task):
             except IOError:
                 pass
 
-    def task_open(self):
+    def task_open(self, command=None):
+        command = command if command else self.command
         try:
-            self.process = subprocess.Popen(self.command, shell=False, bufsize=-1,
+            self.process = subprocess.Popen(command, shell=False, bufsize=-1,
                                             stdout=subprocess.PIPE if self.use_stdout else None,
                                             stderr=subprocess.PIPE if self.use_stderr else None,
                                             preexec_fn=self.pre_run_execute)
             if self.use_stderr:
                 fcntl(self.process.stderr, F_SETFL, fcntl(self.process.stderr, F_GETFL) | os.O_NONBLOCK)
-        except (subprocess.CalledProcessError, OSError, ValueError), e:
-            raise TaskException('invalid command: {0} {1}'.format(self.command, e))
+
+        except (subprocess.CalledProcessError, OSError, ValueError) as e:
+            raise TaskException('invalid command: {0} {1}'.format(command, e))
 
     def task_read(self, buf):
         if not self.process:
             raise TaskException('pipe closed')
         try:
             return self.process.stdout.readinto(buf)
-        except IOError, e:
+        except IOError as e:
             raise TaskException(e)
 
     def task_wait(self):
@@ -199,9 +200,9 @@ class TaskProcessFIFO(TaskProcess):
             item = getpwnam(self.run_as_user)
             os.chown(self.fifo_path, item.pw_uid, item.pw_gid)
 
-    def task_open(self):
+    def task_open(self, command=None):
         self.make_fifo()
-        super(TaskProcessFIFO, self).task_open()
+        super(TaskProcessFIFO, self).task_open(command)
         self.fifo = open(self.fifo_path, 'rb')
 
     def task_read(self, buf):
@@ -210,7 +211,7 @@ class TaskProcessFIFO(TaskProcess):
 
         try:
             return self.fifo.readinto(buf)
-        except IOError, e:
+        except IOError as e:
             raise TaskException(e)
 
     def task_close(self):
@@ -226,11 +227,11 @@ class PluginConfig(dict):
             return default
         return value == 'yes'
 
-    def get_list(self, key, default=list()):
+    def get_list(self, key, default=None):
         value = self.get(key)
         if value is None:
-            return default
-        return value.split(':')
+            return default if default else []
+        return value.split(';')
 
 
 class BareosFdTaskClass(BareosFdPluginBaseclass):
@@ -265,7 +266,7 @@ class BareosFdTaskClass(BareosFdPluginBaseclass):
         self.folder = self.config.get('folder', '@{0}'.format(self.plugin_name.upper()))
         try:
             self.prepare_tasks()
-        except TaskException, _:
+        except TaskException as _:
             return bRCs['bRC_Error']
 
         self.debug_message(context, '{0} task created'.format(len(self.tasks)))
@@ -295,9 +296,10 @@ class BareosFdTaskClass(BareosFdPluginBaseclass):
                     self.job_message(context, bJobMessageType['M_INFO'], '{0} started'.format(self.task.get_name()))
                     self.task.task_pool()
                     self.task.task_open()
-                except TaskException, e:
+                except TaskException as e:
                     self.job_message(context, bJobMessageType['M_ERROR'], '{0} {1}'.format(self.task.get_name(), e))
                     return bRCs['bRC_Error']
+
                 return bRCs['bRC_OK']
 
             elif iop.func == bIOPS['IO_CLOSE']:
@@ -305,7 +307,7 @@ class BareosFdTaskClass(BareosFdPluginBaseclass):
                     self.job_message(context, bJobMessageType['M_INFO'], '{0} done'.format(self.task.get_name()))
                     self.task.task_pool()
                     self.task.task_close()
-                except TaskException, e:
+                except TaskException as e:
                     self.job_message(context, bJobMessageType['M_ERROR'], '{0} {1}'.format(self.task.get_name(), e))
                     return bRCs['bRC_Error']
                 return bRCs['bRC_OK']
@@ -316,9 +318,10 @@ class BareosFdTaskClass(BareosFdPluginBaseclass):
                     iop.io_errno = 0
                     iop.buf = bytearray(iop.count)
                     iop.status = self.task.task_read(iop.buf)
-                except TaskException, e:
+                except TaskException as e:
                     self.job_message(context, bJobMessageType['M_ERROR'], '{0} {1}'.format(self.task.get_name(), e))
                     return bRCs['bRC_Error']
+
                 return bRCs['bRC_OK']
 
         return BareosFdPluginBaseclass.plugin_io(self, context, iop)

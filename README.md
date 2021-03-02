@@ -3,7 +3,7 @@
 These plugins provide specific application's backup for Bareos FileDaemon.
 
 1. XenServer Host, Pool and VM backup [bareos-fd-xenserver.py](xenserver/README.md)
-2. PostgreSQL Database backup [bareos-fd-pgsql.py](psql/README.md)
+2. PostgreSQL Database backup [bareos-fd-pgsql.py](pgsql/README.md)
 3. MySQL Database backup [bareos-fd-mysql.py](mysql/README.md)
 4. Oracle Database backup [bareos-fd-oracle.py](oracle/README.md)
 

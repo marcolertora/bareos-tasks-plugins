@@ -1,7 +1,7 @@
 # Bareos FileDaemon XenServer Plugin
 This plugin makes backup of Xen Server. It can be used to save:
 
-1. VM: using the *xe vm-export* command. The vm should not be running.
+1. VM: using the *xe vm-export* or *snapshot-export-to-template* command.
 2. HOST: using the *xe host-backup* command
 3. POOL DATABASE: using the *xe pool-dump-database* command
 
@@ -27,7 +27,7 @@ FileDaemon {
 }
 ```
 
-nclude the Plugin in the fileset definition on the director
+Include the Plugin in the fileset definition on the director
 ```
 FileSet {
     Name = "client-data"
@@ -57,10 +57,13 @@ Example plugin options:
 Virtual folder used in catalog. Default: *@XENSERVER*
 
 #### vms
-Comma separated list of VM names to backup. Default: unset
+Semicolon separated list of VM names to back up. Default: unset
+
+#### use_snapshot
+Set to *yes* to create a snapshot and back up it instead of VM itself. This allows back up running VM. Default: *yes*
 
 #### host_backup
 Set to *no* to disable host backup. Default: *yes*
 
 #### pool_dump_database
-Set to *no* to disable pool dump database. Default: *yes*
+Set to *no* to disable pool dump database. If the host is not the pool master dump will be skipped. Default: *yes*

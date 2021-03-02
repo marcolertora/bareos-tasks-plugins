@@ -49,6 +49,35 @@ class TaskVmExport(TaskProcess):
         return '{0}-{1}'.format(self.task_name, self.vm_name)
 
 
+class TaskSnapshotExport(TaskVmExport):
+    task_name = 'snapshot-export'
+    file_extension = 'xva'
+
+    def __init__(self, vm_name):
+        self.vm_name = vm_name
+        self.command = []
+        self.snapshot_uuid = None
+        self.snapshot_name = self.vm_name + '_temporary_backup'
+        super(TaskVmExport, self).__init__()
+
+    def task_open(self, command=None):
+        self.snapshot_uuid = self.execute_command(
+            ['xe', 'vm-snapshot', 'vm=' + self.vm_name, 'new-name-label=' + self.snapshot_name]
+        )
+        super(TaskVmExport, self).task_open(
+            ['xe', 'snapshot-export-to-template', 'snapshot-uuid=' + self.snapshot_uuid, 'filename=']
+        )
+
+    def task_wait(self):
+        assert self.snapshot_uuid
+        value = super(TaskVmExport, self).task_wait()
+        self.execute_command(['xe', 'snapshot-uninstall', 'force=true', 'uuid=' + self.snapshot_uuid])
+        return value
+
+    def get_name(self):
+        return '{0}-{1}'.format(self.task_name, self.vm_name)
+
+
 class BareosFdXenServerClass(BareosFdTaskClass):
     plugin_name = 'xenserver'
     pool_conf_path = '/etc/xensource/pool.conf'
@@ -72,4 +101,5 @@ class BareosFdXenServerClass(BareosFdTaskClass):
             self.tasks.append(TaskPoolDumpDatabase())
 
         for vm in self.config.get_list('vms'):
-            self.tasks.append(TaskVmExport(vm))
+            task = TaskSnapshotExport(vm) if self.config.get_boolean('use_snapshot', True) else TaskVmExport(vm)
+            self.tasks.append(task)
