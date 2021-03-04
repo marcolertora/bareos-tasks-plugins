@@ -6,6 +6,7 @@ These plugins provide specific application's backup for Bareos FileDaemon.
 2. PostgreSQL Database backup [bareos-fd-pgsql.py](pgsql/README.md)
 3. MySQL Database backup [bareos-fd-mysql.py](mysql/README.md)
 4. Oracle Database backup [bareos-fd-oracle.py](oracle/README.md)
+5. Ubiquity Edge Switch backup [bareos-fd-edgeswitch.py](edgeswitch/README.md)
 
 **Warning:** These plugins comes with no warranty. They are in early stage of development.
 Verify your backup before use it in production.
