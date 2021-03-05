@@ -1,6 +1,6 @@
-# Bareos FileDaemon PostgreSQL Plugin
+# BareOS FileDaemon PostgreSQL Plugin
 This plugin makes backup of any database found in a PostgreSQL. Each databases is stored in an individual files.
-For restore select the needed database file, found in */@PGSQL* in the catalog.
+To restore select the needed database file, found in */@PGSQL* in the catalog.
 
 ## Prerequisites
 The *pg_dump* and *psql* command must be installed and user *postgres* must have read-access to the databases.
@@ -42,7 +42,7 @@ FileSet {
 
 ### Options
 You can append options to the plugin call as key=value pairs, separated by ':'.
-Please read more about the Bareos Python Plugin Interface here: http://doc.bareos.org/master/html/bareos-manual-main-reference.html#Python-fdPlugin
+Please read more about the BareOS Python Plugin Interface here: http://doc.bareos.org/master/html/bareos-manual-main-reference.html#Python-fdPlugin
 
 Example plugin options:
 ```

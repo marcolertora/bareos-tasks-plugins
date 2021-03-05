@@ -1,11 +1,11 @@
-# Bareos FileDaemon XenServer Plugin
+# BareOS FileDaemon XenServer Plugin
 This plugin makes backup of Xen Server. It can be used to save:
 
 1. VM: using the *xe vm-export* or *snapshot-export-to-template* command.
 2. HOST: using the *xe host-backup* command
 3. POOL DATABASE: using the *xe pool-dump-database* command
 
-For restore select the needed file, found in */@XENSERVER* in the catalog.
+To restore select the needed file, found in */@XENSERVER* in the catalog.
 
 ## Prerequisites
 The plugins has been developed and tested with Xen Server 7.1
@@ -46,7 +46,7 @@ FileSet {
 
 ### Options
 You can append options to the plugin call as key=value pairs, separated by ':'.
-Please read more about the Bareos Python Plugin Interface here: http://doc.bareos.org/master/html/bareos-manual-main-reference.html#Python-fdPlugin
+Please read more about the BareOS Python Plugin Interface here: http://doc.bareos.org/master/html/bareos-manual-main-reference.html#Python-fdPlugin
 
 Example plugin options:
 ```

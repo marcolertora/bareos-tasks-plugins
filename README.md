@@ -1,6 +1,6 @@
-# Bareos FileDaemon Tasks Plugins
+# BareOS FileDaemon Tasks Plugins
 
-These plugins provide specific application's backup for Bareos FileDaemon.
+These plugins provide specific application's backup for BareOS FileDaemon.
 
 1. XenServer Host, Pool and VM backup [bareos-fd-xenserver.py](xenserver/README.md)
 2. PostgreSQL Database backup [bareos-fd-pgsql.py](pgsql/README.md)

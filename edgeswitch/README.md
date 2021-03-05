@@ -1,5 +1,5 @@
-# Bareos FileDaemon EdgeSwitch Plugin
-This plugin makes backup of Ubiquity Edge Switch. It can be used to save device backup.
+# BareOS FileDaemon EdgeSwitch Plugin
+This plugin makes backup of Ubiquity Edge Switch. It can be used to back up device configuration
 To restore select the needed file, found in */@EDGESWITCH* in the catalog.
 
 ## Prerequisites
@@ -12,7 +12,7 @@ You need these python libraries:
 
 ## Installation
 1. Make sure you have met the prerequisites.
-2. Install the files *BareosFdTaskClass.py*, *xenserver/BareosFdEdgeSwitchClass.py* and *xenserver/bareos-fd-edgeswitch.py* in your Bareos plugin directory (usually */usr/lib/bareos/plugins*)
+2. Install the files *BareosFdTaskClass.py*, *edgeswitch.py*, *xenserver/BareosFdEdgeSwitchClass.py* and *xenserver/bareos-fd-edgeswitch.py* in your Bareos plugin directory (usually */usr/lib/bareos/plugins*)
 
 ## Configuration
 
@@ -44,7 +44,7 @@ FileSet {
 
 ### Options
 You can append options to the plugin call as key=value pairs, separated by ':'.
-Please read more about the Bareos Python Plugin Interface here: http://doc.bareos.org/master/html/bareos-manual-main-reference.html#Python-fdPlugin
+Please read more about the BareOS Python Plugin Interface here: http://doc.bareos.org/master/html/bareos-manual-main-reference.html#Python-fdPlugin
 
 Example plugin options:
 ```

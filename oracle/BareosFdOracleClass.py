@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- Mode: Python; tab-width: 4 -*-
 #
-# Bareos FileDaemon Task plugin
+# BareOS FileDaemon Task plugin
 # Copyright (C) 2018 Marco Lertora <marco.lertora@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify

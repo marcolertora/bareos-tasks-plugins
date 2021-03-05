@@ -1,6 +1,6 @@
-# Bareos FileDaemon Oracle Plugin
+# BareOS FileDaemon Oracle Plugin
 This plugin makes a backup of an oracle database using exp tool in a single file.
-For restore select the needed database file, found in */@ORACLE* in the catalog.
+To restore select the needed database file, found in */@ORACLE* in the catalog.
 
 ## Prerequisites
 The *exp* tool must be installed and user *oracle* must have read-access to the database.
@@ -42,7 +42,7 @@ FileSet {
 
 ### Options
 You can append options to the plugin call as key=value pairs, separated by ':'.
-Please read more about the Bareos Python Plugin Interface here: http://doc.bareos.org/master/html/bareos-manual-main-reference.html#Python-fdPlugin
+Please read more about the BareOS Python Plugin Interface here: http://doc.bareos.org/master/html/bareos-manual-main-reference.html#Python-fdPlugin
 
 Example plugin options:
 ```
