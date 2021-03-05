@@ -56,14 +56,23 @@ Example plugin options:
 #### folder
 Virtual folder used in catalog. Default: *@XENSERVER*
 
-#### vms
-Semicolon separated list of VM names to back up. Default: unset
-
-#### use_snapshot
-Set to *yes* to create a snapshot and back up it instead of VM itself. This allows back up running VM. Default: *yes*
-
 #### host_backup
 Set to *no* to disable host backup. Default: *yes*
 
 #### pool_dump_database
-Set to *no* to disable pool dump database. If the host is not the pool master dump will be skipped. Default: *yes*
+Set to *no* to disable pool dump database. If host is not the pool master, dump will be skipped. Default: *yes*
+
+#### virtual_machines_backup
+Set to *yes* to enable virtual machines backup. Default: *no*
+
+#### virtual_machines
+Semicolon separated list of virtual machines names to back up. if unset all virtual machine are dumped. Default: unset
+
+#### exclude
+Comma separated list of database names exclude from backup. Default: unset
+
+#### running_only
+Set to *no* to include virtual machines in any power-state. Default: *yes*
+
+#### use_snapshot
+Set to *yes* to create a snapshot and back up it instead of virtual machine itself. This allows back up running virtual machine. Default: *yes*

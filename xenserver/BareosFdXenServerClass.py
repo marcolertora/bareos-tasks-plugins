@@ -86,6 +86,43 @@ class BareosFdXenServerClass(BareosFdTaskClass):
     def get_hostname():
         return socket.gethostname()
 
+    @staticmethod
+    def fix_xe_key(data):
+        data = data.strip()
+        key, mode = data[:-5], data[-3:-1]
+        return key.strip()
+
+    @staticmethod
+    def parse_vm_list(data):
+        items = [
+            {
+                BareosFdXenServerClass.fix_xe_key(k): v.strip()
+                for k, v in map(lambda x: x.split(':', 1), filter(lambda x: x, record.splitlines()))
+            }
+            for record in data.split('\n\n\n') if record.strip()
+        ]
+
+        return items
+
+    @staticmethod
+    def get_vm_names(running_only):
+        data = TaskProcess().execute_command(['xe', 'vm-list'])
+
+        items = []
+        for vm_info in BareosFdXenServerClass.parse_vm_list(data):
+            assert 'name-label' in vm_info
+            assert 'power-state' in vm_info
+
+            if vm_info['name-label'].startswith('Control domain on host:'):
+                continue
+
+            if running_only and vm_info['power-state'] != 'running':
+                continue
+
+            items.append(vm_info['name-label'])
+
+        return items
+
     def is_pool_master(self):
         with open(self.pool_conf_path, 'r') as fin:
             data = fin.read()
@@ -100,6 +137,14 @@ class BareosFdXenServerClass(BareosFdTaskClass):
         if self.config.get_boolean('pool_dump_database', True) and self.is_pool_master():
             self.tasks.append(TaskPoolDumpDatabase())
 
-        for vm in self.config.get_list('vms'):
-            task = TaskSnapshotExport(vm) if self.config.get_boolean('use_snapshot', True) else TaskVmExport(vm)
-            self.tasks.append(task)
+        if self.config.get_boolean('virtual_machines_backup', False):
+            running_only = self.config.get_boolean('running_only', True)
+            vms = self.config.get_list('virtual_machines', self.get_vm_names(running_only))
+
+            if 'exclude' in self.config:
+                exclude = self.config.get_list('exclude')
+                vms = filter(lambda x: x not in exclude, vms)
+
+            for vm in vms:
+                task = TaskSnapshotExport(vm) if self.config.get_boolean('use_snapshot', True) else TaskVmExport(vm)
+                self.tasks.append(task)
