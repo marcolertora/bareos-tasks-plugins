@@ -262,14 +262,17 @@ class BareosFdTaskClass(BareosFdPluginBaseclass):
     def parse_plugin_definition(self, context, plugin_def):
         BareosFdPluginBaseclass.parse_plugin_definition(self, context, plugin_def)
         self.job_type = GetValue(context, bVariable['bVarType'])
-        self.config = PluginConfig(**self.options)
-        self.folder = self.config.get('folder', '@{0}'.format(self.plugin_name.upper()))
-        try:
-            self.prepare_tasks()
-        except TaskException as _:
-            return bRCs['bRC_Error']
 
-        self.debug_message(context, '{0} task created'.format(len(self.tasks)))
+        if self.job_type == bJobType['BACKUP']:
+            self.config = PluginConfig(**self.options)
+            self.folder = self.config.get('folder', '@{0}'.format(self.plugin_name.upper()))
+            try:
+                self.prepare_tasks()
+            except TaskException as _:
+                return bRCs['bRC_Error']
+
+            self.debug_message(context, '{0} task created'.format(len(self.tasks)))
+
         return bRCs['bRC_OK']
 
     def start_backup_file(self, context, save_pkt):
