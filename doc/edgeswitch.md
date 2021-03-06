@@ -12,7 +12,7 @@ You need these python libraries:
 
 ## Installation
 1. Make sure you have met the prerequisites.
-2. Install the files *BareosFdTaskClass.py*, *edgeswitch.py*, *xenserver/BareosFdEdgeSwitchClass.py* and *xenserver/bareos-fd-edgeswitch.py* in your Bareos plugin directory (usually */usr/lib/bareos/plugins*)
+2. Install the files *BareosFdTaskClass.py*, *xenserver/BareosFdEdgeSwitchClass.py* and *xenserver/bareos-fd-edgeswitch.py* in your Bareos plugin directory (usually */usr/lib/bareos/plugins*)
 
 ## Configuration
 
