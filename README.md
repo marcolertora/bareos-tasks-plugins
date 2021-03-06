@@ -2,11 +2,11 @@
 
 These plugins provide specific application's backup for BareOS FileDaemon.
 
-1. XenServer Host, Pool and VM backup [bareos-fd-xenserver.py](xenserver/README.md)
-2. PostgreSQL Database backup [bareos-fd-pgsql.py](pgsql/README.md)
-3. MySQL Database backup [bareos-fd-mysql.py](mysql/README.md)
-4. Oracle Database backup [bareos-fd-oracle.py](oracle/README.md)
-5. Ubiquity Edge Switch backup [bareos-fd-edgeswitch.py](edgeswitch/README.md)
+1. XenServer Host, Pool and VM backup [bareos-fd-xenserver.py](doc/xenserver.md)
+2. PostgreSQL Database backup [bareos-fd-pgsql.py](doc/pgsql.md)
+3. MySQL Database backup [bareos-fd-mysql.py](doc/mysql.md)
+4. Oracle Database backup [bareos-fd-oracle.py](doc/oracle.md)
+5. Ubiquity Edge Switch backup [bareos-fd-edgeswitch.py](doc/edgeswitch.md)
 
 **Warning:** These plugins comes with no warranty. They are in early stage of development.
 Verify your backup before use it in production.
@@ -39,6 +39,17 @@ Source code should be quite easy to understand and provided plugins could be eas
 The restore operation, at least at the moment, is not managed by this class.
 File are restored in the filesystem as regular file as it is implemented in *BareosFdPluginBaseClass,py*.
 Anyway, the plugin needs to be installed on the FileDaemon used as destination.
+
+## Build package
+```console
+pip install setuptools wheel
+python setup.py sdist bdist_wheel
+```
+
+## Install
+```console
+pip install git+https://github.com/marcolertora/bareos-tasks-plugins
+```
 
 ## Contributing
 
