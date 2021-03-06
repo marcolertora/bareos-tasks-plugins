@@ -20,9 +20,9 @@
 import BareosFdWrapper
 from bareos_fd_consts import bRCs
 from BareosFdWrapper import *
-from edgeswitch.BareosFdEdgeSwitchClass import BareosFdEdgeSwitchClass
+from BareosFdXenServerClass import BareosFdXenServerClass
 
 
 def load_bareos_plugin(context, plugin_def):
-    BareosFdWrapper.bareos_fd_plugin_object = BareosFdEdgeSwitchClass(context, plugin_def)
+    BareosFdWrapper.bareos_fd_plugin_object = BareosFdXenServerClass(context, plugin_def)
     return bRCs['bRC_OK']

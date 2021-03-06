@@ -40,17 +40,6 @@ The restore operation, at least at the moment, is not managed by this class.
 File are restored in the filesystem as regular file as it is implemented in *BareosFdPluginBaseClass,py*.
 Anyway, the plugin needs to be installed on the FileDaemon used as destination.
 
-## Build package
-```console
-pip install setuptools wheel
-python setup.py sdist bdist_wheel
-```
-
-## Install
-```console
-pip install git+https://github.com/marcolertora/bareos-tasks-plugins
-```
-
 ## Contributing
 
 Contributions are welcome.

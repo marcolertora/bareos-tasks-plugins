@@ -20,9 +20,9 @@
 import BareosFdWrapper
 from bareos_fd_consts import bRCs
 from BareosFdWrapper import *
-from oracle.BareosFdOracleClass import BareosFdOracleClass
+from BareosFdEdgeSwitchClass import BareosFdEdgeSwitchClass
 
 
 def load_bareos_plugin(context, plugin_def):
-    BareosFdWrapper.bareos_fd_plugin_object = BareosFdOracleClass(context, plugin_def)
+    BareosFdWrapper.bareos_fd_plugin_object = BareosFdEdgeSwitchClass(context, plugin_def)
     return bRCs['bRC_OK']

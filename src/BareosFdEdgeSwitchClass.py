@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 # -*- Mode: Python; tab-width: 4 -*-
 #
-# Copyright (C) 2021 Marco Lertora <marco.lertora@gmail.com>
+# BareOS FileDaemon Task plugin
+# Copyright (C) 2018 Marco Lertora <marco.lertora@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
@@ -15,10 +16,10 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
-import argparse
+from StringIO import StringIO
+from BareosFdTaskClass import BareosFdTaskClass, TaskException, TaskStringIO
 import requests
 import urllib3
-
 urllib3.disable_warnings()
 
 
@@ -97,40 +98,39 @@ class EdgeSwitch:
         return r.content
 
 
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
 
-    parser.add_argument(
-        'host',
-        type=str,
-        help='host of device'
-    )
-    parser.add_argument(
-        '--filename',
-        type=str,
-        default='backup.tgz',
-        help='output filename (default: %(default))'
-    )
-    parser.add_argument(
-        '--username',
-        type=str,
-        default='admin',
-        help='username of device (default: %(default))'
-    )
-    parser.add_argument(
-        '--password',
-        type=str,
-        default='secret',
-        help='password of device (default: %(default))'
-    )
-    parser.add_argument(
-        '--verbose',
-        action='store_true',
-        dest='safe_mode',
-        help='verbose mode (default: %(default))'
-    )
+class TaskEdgeSwitchBackup(TaskStringIO):
+    task_name = 'edgeswitch-backup'
+    file_extension = 'tgz'
 
-    args = parser.parse_args()
+    def __init__(self, host, username, password):
+        if not host:
+            raise TaskException('host is required')
 
-    print('backup edge switch: {0} to {1}...'.format(args.host, args.filename ))
-    EdgeSwitch.save_backup(args.host, args.username, args.password, args.filename)
+        if not username:
+            raise TaskException('host is required')
+
+        if not password:
+            raise TaskException('host is required')
+
+        self.host = host
+        data = EdgeSwitch.get_backup(host, username, password)
+        super(TaskEdgeSwitchBackup, self).__init__(self.task_name, StringIO(data))
+
+    def get_name(self):
+        return '{0}-{1}'.format(self.task_name, self.host)
+
+
+class BareosFdEdgeSwitchClass(BareosFdTaskClass):
+    plugin_name = 'edgeswitch'
+
+    def prepare_tasks(self):
+        self.tasks = list()
+
+        task = TaskEdgeSwitchBackup(
+            self.config.get('host'),
+            self.config.get('username'),
+            self.config.get('password'),
+        )
+
+        self.tasks.append(task)

@@ -17,7 +17,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import socket
-from commons.BareosFdTaskClass import TaskProcess, BareosFdTaskClass
+from BareosFdTaskClass import TaskProcess, BareosFdTaskClass
 
 
 class TaskHostBackup(TaskProcess):

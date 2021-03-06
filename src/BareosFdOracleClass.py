@@ -18,7 +18,7 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import os
 import shlex
-from commons.BareosFdTaskClass import TaskProcessFIFO, BareosFdTaskClass
+from BareosFdTaskClass import TaskProcessFIFO, BareosFdTaskClass
 
 
 class TaskDumpDatabase(TaskProcessFIFO):
