@@ -174,6 +174,9 @@ class TaskProcess(Task):
             raise TaskException(e)
 
     def task_wait(self):
+        if not self.process:
+            return '[X] missing pipe, maybe task_open has failed'
+
         self.process.wait()
         code = self.process.poll()
 
@@ -330,10 +333,10 @@ class BareosFdTaskClass(BareosFdPluginBaseclass):
         return BareosFdPluginBaseclass.plugin_io(self, context, iop)
 
     def end_backup_file(self, context):
-        result = self.task.task_wait()
+        error_on_wait = self.task.task_wait()
 
-        if result:
-            self.job_message(context, bJobMessageType['M_ERROR'], '{0} {1}'.format(self.task.get_details(), result))
+        if error_on_wait:
+            self.job_message(context, bJobMessageType['M_ERROR'], '{0} {1}'.format(self.task.get_details(), error_on_wait))
             return bRCs['bRC_Error']
 
         self.tasks.extend(self.task.get_next_tasks())

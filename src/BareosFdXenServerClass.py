@@ -17,7 +17,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import socket
-from BareosFdTaskClass import TaskProcess, BareosFdTaskClass
+from BareosFdTaskClass import TaskProcess, BareosFdTaskClass, TaskException
 
 
 class TaskHostBackup(TaskProcess):
@@ -60,18 +60,29 @@ class TaskSnapshotExport(TaskVmExport):
         super(TaskVmExport, self).__init__()
 
     def task_open(self, command=None):
-        self.snapshot_uuid = self.execute_command(
-            ['xe', 'vm-snapshot', 'vm=' + self.vm_name, 'new-name-label=' + self.snapshot_name]
-        )
-        super(TaskVmExport, self).task_open(
-            ['xe', 'snapshot-export-to-template', 'snapshot-uuid=' + self.snapshot_uuid, 'filename=']
-        )
+        try:
+            self.snapshot_uuid = self.execute_command(
+                ['xe', 'vm-snapshot', 'vm=' + self.vm_name, 'new-name-label=' + self.snapshot_name]
+            )
+            super(TaskVmExport, self).task_open(
+                ['xe', 'snapshot-export-to-template', 'snapshot-uuid=' + self.snapshot_uuid, 'filename=']
+            )
+        except TaskException as e:
+            raise TaskException('error generating {0} snapshot: {1}'.format(self.vm_name, e))
 
     def task_wait(self):
-        assert self.snapshot_uuid
-        value = super(TaskVmExport, self).task_wait()
-        self.execute_command(['xe', 'snapshot-uninstall', 'force=true', 'uuid=' + self.snapshot_uuid])
-        return value
+        if not self.snapshot_uuid:
+            return '[X] missing snapshot_uuid, something in task_open went wrong'
+
+        error_on_wait = super(TaskVmExport, self).task_wait()
+
+        if error_on_wait:
+            return error_on_wait
+
+        try:
+            self.execute_command(['xe', 'snapshot-uninstall', 'force=true', 'uuid=' + self.snapshot_uuid])
+        except TaskException as e:
+            return '[X] {0}'.format(e)
 
     def get_name(self):
         return '{0}-{1}'.format(self.task_name, self.vm_name)
